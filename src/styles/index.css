@@ -1,0 +1,287 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+/*
+ * ============================================================
+ *  UML Canvas — Global Styles
+ * ============================================================
+ *
+ *  Design Philosophy: "Calm Precision"
+ *  ────────────────────────────────────
+ *  A workspace optimized for engineering focus. The canvas
+ *  is always the visual anchor. Panels are secondary tools
+ *  that recede when not in use.
+ *
+ * ============================================================
+ */
+
+/* ── Custom Tailwind Theme Tokens ──────────────────────────── */
+@theme {
+  --color-brand-50:  #f0f9ff;
+  --color-brand-100: #e0f2fe;
+  --color-brand-200: #bae6fd;
+  --color-brand-300: #7dd3fc;
+  --color-brand-400: var(--accent-cyan);
+  --color-brand-500: var(--brand-primary);
+  --color-brand-600: var(--brand-hover);
+  --color-brand-700: #1d4ed8;
+  --color-brand-800: #1e40af;
+  --color-brand-900: #1e3a8a;
+
+  --color-surface-50:  var(--text-primary);
+  --color-surface-100: #f1f5f9;
+  --color-surface-200: var(--text-secondary);
+  --color-surface-300: #cbd5e1;
+  --color-surface-400: var(--text-secondary);
+  --color-surface-500: var(--text-muted);
+  --color-surface-600: #475569;
+  --color-surface-700: #334155;
+  --color-surface-800: #1e293b;
+  --color-surface-900: var(--bg-secondary);
+  --color-surface-950: var(--bg-primary);
+
+  --color-success: var(--color-success);
+  --color-warning: #f59e0b;
+  --color-error:   var(--color-danger);
+  --color-info:    var(--brand-primary);
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  --border-subtle: var(--subtle-border);
+
+  --shadow-node:  0 4px 12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(120, 140, 255, 0.08);
+  --shadow-panel: 0 24px 48px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(120, 140, 255, 0.1);
+  --shadow-glow:  0 0 20px rgba(79, 124, 255, 0.1);
+}
+
+/* ── Base Resets ───────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-height: 100dvh;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Global Scrollbar (Webkit) ───────────────────────────────
+ *
+ *  WHY: 4px scrollbars respect panel width budget.
+ *  Wider scrollbars compete visually with content and push
+ *  inputs outside their intended column widths.
+ *
+ * ────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width:  var(--scrollbar-width);
+  height: var(--scrollbar-width);
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* ── Selection ────────────────────────────────────────────── */
+::selection {
+  background-color: rgba(79, 124, 255, 0.25);
+  color: var(--text-primary);
+}
+
+/* ── Scroll Ergonomics ────────────────────────────────────── */
+/* Applied to all panel scroll containers for smooth feel.    */
+.panel-scroll {
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+}
+
+/* Overflow fade: signals to the user that content continues. */
+.panel-scroll-fade {
+  position: relative;
+}
+.panel-scroll-fade::after {
+  content: '';
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 32px;
+  display: block;
+  background: linear-gradient(to bottom, transparent, var(--bg-primary));
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+/* ── React Flow Overrides ───────────────────────────────────── */
+
+.react-flow__background {
+  background-color: var(--bg-primary) !important;
+}
+
+.react-flow__minimap {
+  background-color: var(--bg-secondary) !important;
+  border: var(--panel-border) !important;
+  border-radius: var(--radius-xl) !important;
+  overflow: hidden;
+  box-shadow: var(--shadow-panel);
+  width: var(--minimap-width) !important;
+  height: var(--minimap-height) !important;
+}
+
+.react-flow__controls {
+  border: var(--panel-border) !important;
+  border-radius: var(--radius-lg) !important;
+  overflow: hidden;
+  box-shadow: var(--shadow-panel);
+}
+
+.react-flow__controls button {
+  width: 32px !important;
+  height: 32px !important;
+  background-color: var(--bg-secondary) !important;
+  border-bottom-color: var(--divider-color) !important;
+  fill: var(--text-secondary) !important;
+  transition: all 120ms ease;
+}
+
+.react-flow__controls button:hover {
+  background-color: var(--color-surface-800) !important;
+  fill: var(--text-primary) !important;
+}
+
+.react-flow__handle {
+  width:  8px;
+  height: 8px;
+  background-color: var(--bg-primary) !important;
+  border: 1.5px solid var(--brand-primary) !important;
+  transition: transform 180ms ease;
+}
+
+.react-flow__handle:hover {
+  transform: scale(1.5);
+}
+
+.react-flow__connection-line {
+  stroke: var(--color-brand-500) !important;
+  stroke-width: 1.5 !important;
+}
+
+.react-flow__selection {
+  background: rgba(79, 124, 255, 0.06) !important;
+  border: 1px solid var(--brand-primary) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+.react-flow__node.selected {
+  box-shadow: 0 0 0 2px var(--brand-primary), var(--shadow-glow) !important;
+}
+
+/* ── Shared Input System ──────────────────────────────────── */
+/* Reusable input styles consumed by Sidebar + Inspector.     */
+.editor-input {
+  height: var(--input-height-md);
+  width: 100%;
+  border-radius: var(--radius-md);
+  border: var(--divider-width) solid var(--subtle-border);
+  background-color: rgba(13, 18, 35, 0.4);
+  padding: 0 var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  outline: none;
+  transition: all 120ms ease;
+}
+
+.editor-input:focus {
+  border-color: var(--brand-primary);
+  background-color: rgba(13, 18, 35, 0.6);
+  box-shadow: 0 0 0 1px var(--brand-primary);
+}
+
+.editor-input::placeholder {
+  color: var(--color-surface-600);
+  font-size: var(--text-xs);
+}
+
+.editor-textarea {
+  width: 100%;
+  max-height: var(--textarea-max-h);
+  border-radius: var(--radius-md);
+  border: var(--divider-width) solid var(--subtle-border);
+  background-color: rgba(13, 18, 35, 0.4);
+  padding: var(--space-2) var(--space-3);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--text-secondary);
+  outline: none;
+  resize: none;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+  transition: all 120ms ease;
+}
+
+.editor-textarea:focus {
+  border-color: var(--brand-primary);
+  background-color: rgba(13, 18, 35, 0.6);
+  box-shadow: 0 0 0 1px var(--brand-primary);
+}
+
+.editor-textarea::placeholder {
+  color: var(--color-surface-600);
+  font-size: var(--text-xs);
+}
+
+/* ── Shared Label System ──────────────────────────────────── */
+.editor-label {
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-surface-500);
+  user-select: none;
+  margin-bottom: var(--space-2);
+  display: block;
+}
+
+/* ── Shared Section Divider ───────────────────────────────── */
+.editor-divider {
+  width: 100%;
+  height: var(--divider-width);
+  background: var(--divider-color);
+  flex-shrink: 0;
+}
+
+/* ── Performance Mode ─────────────────────────────────────── */
+.performance-mode .react-flow__node {
+  box-shadow: none !important;
+}
+
+.performance-mode * {
+  transition: none !important;
+}

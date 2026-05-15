@@ -1,0 +1,110 @@
+/*
+ * ============================================================
+ *  Design Tokens — UML Canvas Engineering Workspace
+ * ============================================================
+ *
+ *  WHY THIS FILE EXISTS:
+ *  ─────────────────────
+ *  Centralizing layout values into tokens (rather than
+ *  scattering magic numbers across components) ensures:
+ *
+ *  1. CONSISTENCY — one change propagates everywhere
+ *  2. LEGIBILITY — token names communicate intent, not value
+ *  3. DISCIPLINE — prevents drift between components
+ *  4. PRECISION — every number is intentional, on a 4px grid
+ *
+ *  All tokens are on a 4px base grid.
+ *  All components must consume these tokens.
+ *  No hardcoded spacing or sizing values allowed.
+ *
+ * ============================================================
+ */
+
+:root {
+
+  /* ── Spacing Scale (4px base grid) ───────────────────────── */
+  /* Used for margin, padding, gap, and positional offsets.     */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* ── Panel Sizing ─────────────────────────────────────────── */
+  /* Fixed dimensions for structural workspace panels.          */
+  --sidebar-width:    64px;
+  --inspector-width:  280px;
+  --toolbar-height:    48px;
+  --minimap-width:    160px;
+  --minimap-height:   110px;
+  --header-height:     0px; /* Header hidden in rail layout */
+  --viewport-offset:   24px;
+
+  /* ── Panel Styling ────────────────────────────────────────── */
+  --bg-primary:      #060816;
+  --bg-secondary:    #0B1020;
+  --panel-bg:        rgba(13, 18, 35, 0.88);
+  --panel-blur:      24px;
+  --panel-border:    1px solid rgba(120, 140, 255, 0.12);
+  --subtle-border:   rgba(120, 140, 255, 0.12);
+  --bg-gradient:     linear-gradient(135deg, #4E3C73 0%, #2B5876 100%);
+
+  /* ── Brand & Status ───────────────────────────────────────── */
+  --brand-primary:   #4F7CFF;
+  --brand-hover:     #6992FF;
+  --accent-cyan:     #38BDF8;
+  --color-success:   #10B981;
+  --color-danger:    #EF4444;
+
+  /* ── Typography Colors ────────────────────────────────────── */
+  --text-primary:    #F5F7FF;
+  --text-secondary:  #94A3B8;
+  --text-muted:      #64748B;
+
+  /* ── Border Radius Scale ──────────────────────────────────── */
+  /* Consistent corner rounding across all interactive elements. */
+  --radius-sm:   4px;
+  --radius-md:   6px;
+  --radius-lg:   8px;
+  --radius-xl:  12px;
+  --radius-2xl: 16px;
+  --radius-full: 9999px;
+
+  /* ── Typography Scale ─────────────────────────────────────── */
+  /* Max 3 distinct font sizes within any single panel.         */
+  --text-2xs: 10px;   /* Section labels, uppercase-tracked */
+  --text-xs:  11px;   /* Field labels, secondary info      */
+  --text-sm:  12px;   /* Input values, list items          */
+  --text-base: 13px;  /* Primary body text                 */
+  --text-md:  14px;   /* Prominent values, headings        */
+  --text-lg:  16px;   /* Panel headers, node class names   */
+
+  /* ── Z-Index Hierarchy ────────────────────────────────────── */
+  /* Strict layering prevents visual ambiguity.                 */
+  /* Canvas is always baseline; panels float above it.         */
+  --z-canvas:   0;
+  --z-panel:   10;
+  --z-minimap: 15;
+  --z-toolbar: 20;
+  --z-overlay: 30;
+  --z-tooltip: 40;
+
+  /* ── Input Sizing ─────────────────────────────────────────── */
+  --input-height-sm:  28px;   /* Select dropdowns, tight rows  */
+  --input-height-md:  32px;   /* Standard single-line inputs   */
+  --input-height-lg:  36px;   /* Prominent/primary inputs      */
+  --textarea-max-h:   80px;   /* Caps textarea growth          */
+
+  /* ── Divider ──────────────────────────────────────────────── */
+  --divider-color:   rgba(120, 140, 255, 0.08);
+  --divider-width:   0.5px;
+
+  /* ── Scrollbar (panel-level) ──────────────────────────────── */
+  --scrollbar-width:        4px;
+  --scrollbar-thumb:        rgba(255, 255, 255, 0.12);
+  --scrollbar-thumb-hover:  rgba(255, 255, 255, 0.22);
+}
