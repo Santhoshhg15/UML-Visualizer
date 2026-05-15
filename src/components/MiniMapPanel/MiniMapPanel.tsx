@@ -9,7 +9,7 @@ import { Map, X } from 'lucide-react';
 import { useAppStore } from '@/store';
 
 interface MiniMapPanelProps {
-  containerRef: React.RefObject<HTMLDivElement>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export default function MiniMapPanel({ containerRef: _ }: MiniMapPanelProps) {
@@ -76,8 +76,6 @@ export default function MiniMapPanel({ containerRef: _ }: MiniMapPanelProps) {
           maskColor="rgba(6, 8, 22, 0.75)"
           pannable={!isLayouting}
           zoomable={!isLayouting}
-          width={WIDTH}
-          height={HEIGHT}
           style={{
             margin: 0,
             backgroundColor: 'transparent',

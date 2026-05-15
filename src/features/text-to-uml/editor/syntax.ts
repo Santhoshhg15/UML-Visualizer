@@ -12,8 +12,11 @@ export const umlLanguage = StreamLanguage.define({
   token(stream) {
     if (stream.eatSpace()) return null;
 
+    // Relationships (Arrows)
+    if (stream.match(/^(->|--|>|extends|implements)/i)) return 'atom';
+    
     // Keywords
-    if (stream.match(/^(Class|Interface|extends|implements)\b/i)) return 'keyword';
+    if (stream.match(/^(Class|Interface)\b/i)) return 'keyword';
     
     // Section Headers
     if (stream.match(/^(Attributes|Methods):/i)) return 'meta';
@@ -44,10 +47,10 @@ export const umlLanguage = StreamLanguage.define({
  */
 export const umlEditorTheme = EditorView.theme({
   "&": {
-    color: "#e2e8f0", // surface-200
+    color: "#f8fafc",
     backgroundColor: "transparent",
     fontSize: "13px",
-    fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+    fontFamily: "var(--font-mono)",
   },
   ".cm-content": {
     caretColor: "#38bdf8", // brand-400
@@ -90,13 +93,14 @@ export const umlEditorTheme = EditorView.theme({
  * Maps the tags returned by the StreamParser to specific colors.
  */
 const umlHighlightStyle = HighlightStyle.define([
-  { tag: t.keyword, color: "#38bdf8", fontWeight: "600" }, // brand-400
-  { tag: t.meta, color: "#94a3b8", fontWeight: "600", letterSpacing: "0.05em", textTransform: "uppercase" }, // section headers
-  { tag: t.typeName, color: "#f8fafc", fontWeight: "500" }, // Class names
-  { tag: t.variableName, color: "#cbd5e1" }, // attribute names
-  { tag: t.function(t.variableName), color: "#818cf8" }, // method names
-  { tag: t.operator, color: "#64748b" },
-  { tag: t.punctuation, color: "#64748b" },
+  { tag: t.keyword, color: "#38bdf8", fontWeight: "700" }, // brand-400 (Cyan)
+  { tag: t.atom, color: "#fb7185", fontWeight: "600" }, // Relationships (Rose)
+  { tag: t.meta, color: "#94a3b8", fontWeight: "600", letterSpacing: "0.08em", textTransform: "uppercase" }, // section headers
+  { tag: t.typeName, color: "#ffffff", fontWeight: "600" }, // Class names (Pure White)
+  { tag: t.variableName, color: "#94a3b8" }, // attribute names (Muted Gray)
+  { tag: t.function(t.variableName), color: "#818cf8", fontWeight: "500" }, // method names (Indigo)
+  { tag: t.operator, color: "#475569" },
+  { tag: t.punctuation, color: "#475569" },
 ]);
 
 export const umlSyntaxHighlighting = syntaxHighlighting(umlHighlightStyle);

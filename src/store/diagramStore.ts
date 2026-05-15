@@ -12,7 +12,7 @@ import { create } from 'zustand';
 import type { Node, Edge, OnNodesChange, OnEdgesChange, OnConnect } from '@xyflow/react';
 import { applyNodeChanges, applyEdgeChanges, addEdge } from '@xyflow/react';
 import { loadFromStorage, saveToStorage } from '@/utils/persistence';
-import type { UMLNodeData } from '@/nodes';
+import type { UMLNodeData, UMLMember } from '@/nodes';
 
 interface DiagramState {
   nodes: Node[];

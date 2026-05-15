@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { linter } from '@codemirror/lint';
 import type { Diagnostic } from '@codemirror/lint';
@@ -106,7 +106,7 @@ export function UMLCodeEditor({ value, onChange, errors }: UMLCodeEditorProps) {
         theme="dark" // Fallback dark mode basics
         style={{
           width: '100%',
-          minHeight: '300px',
+          height: '100%',
         }}
       />
     </div>

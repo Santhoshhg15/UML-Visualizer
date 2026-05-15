@@ -19,7 +19,6 @@ import { useDiagramStore } from '@/store';
 import type { UMLNodeData, UMLMember } from '@/nodes';
 import { X, Plus, Trash2 } from 'lucide-react';
 import { Panel } from '@xyflow/react';
-import { cn } from '@/utils/cn';
 
 export default function InspectorPanel() {
   const selectedNodeId   = useDiagramStore((s) => s.selectedNodeId);

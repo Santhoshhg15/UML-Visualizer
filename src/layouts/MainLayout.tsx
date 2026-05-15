@@ -10,7 +10,6 @@
  */
 
 import type { ReactNode } from 'react';
-import { Logo } from '@/components';
 
 interface MainLayoutProps {
   children: ReactNode;

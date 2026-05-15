@@ -21,6 +21,10 @@
  */
 
 :root {
+  /* ── Typography Families ────────────────────────────────── */
+  --font-sans: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+
 
   /* ── Spacing Scale (4px base grid) ───────────────────────── */
   /* Used for margin, padding, gap, and positional offsets.     */
@@ -45,7 +49,7 @@
   --viewport-offset:   24px;
 
   /* ── Panel Styling ────────────────────────────────────────── */
-  --bg-primary:      #060816;
+  --bg-primary:      #0a0a0b;
   --bg-secondary:    #0B1020;
   --panel-bg:        rgba(13, 18, 35, 0.88);
   --panel-blur:      24px;

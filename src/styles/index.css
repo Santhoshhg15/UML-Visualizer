@@ -45,7 +45,7 @@
   --color-error:   var(--color-danger);
   --color-info:    var(--brand-primary);
 
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-sans);
 
   --border-subtle: var(--subtle-border);
 

@@ -47,7 +47,7 @@ export default function InheritanceEdge({
 
   /* ── Hover state shared between SVG hit-path and HTML badge ── */
   const [lineHovered, setLineHovered] = useState(false);
-  const hideTimer = useRef<ReturnType<typeof setTimeout>>();
+  const hideTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const reveal = useCallback(() => {
     clearTimeout(hideTimer.current);

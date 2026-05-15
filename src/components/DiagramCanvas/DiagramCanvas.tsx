@@ -37,7 +37,7 @@ import { useDiagramStore, useAppStore } from '@/store';
 import { nodeTypes } from '@/nodes';
 import { edgeTypes } from '@/edges';
 import { exportToPNG, exportToSVG } from '@/utils/exportDiagram';
-import { Trash2, Save, FolderOpen, DownloadCloud, UploadCloud, Layout, Loader2, Plus, MousePointer2, Keyboard, Copy, MousePointerClick } from 'lucide-react';
+import { Trash2, Save, FolderOpen, DownloadCloud, UploadCloud, Layout, Loader2, Plus, Copy, MousePointerClick, Layers } from 'lucide-react';
 import { getLayoutedElements } from '@/utils/elk';
 import { InspectorPanel, MiniMapPanel } from '@/components';
 import { saveToStorage, loadFromStorage } from '@/utils/persistence';
@@ -227,7 +227,6 @@ export default function DiagramCanvas() {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onNodeClick={(_, node) => setSelectedNodeId(node.id)}
-        onPaneClick={() => setSelectedNodeId(null)}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         colorMode={colorMode}
@@ -278,33 +277,23 @@ export default function DiagramCanvas() {
           </div>
         )}
 
-        {/* ── Empty State Onboarding ── */}
+        {/* ── Minimalist Empty State ── */}
         {nodes.length === 0 && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-            <div className="max-w-md p-10 text-center animate-in fade-in zoom-in-95 duration-700">
-              <div className="w-16 h-16 mx-auto mb-8 bg-brand-500/5 rounded-[2rem] flex items-center justify-center text-brand-400/50">
-                <MousePointerClick size={32} strokeWidth={1.5} />
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
+              className="max-w-xs text-center"
+            >
+              <div className="w-12 h-12 mx-auto mb-6 rounded-full bg-cyan-500/5 flex items-center justify-center text-cyan-400/30 border border-cyan-500/10">
+                <Layers size={20} strokeWidth={1.5} />
               </div>
-              <h2 className="text-xl font-bold text-surface-50 mb-3 tracking-tight">Empty Workspace</h2>
-              <p className="text-sm text-surface-500 mb-8 leading-relaxed">
-                Start building your system architecture. Create your first node or use keyboard shortcuts.
+              <h2 className="text-[13px] font-bold text-surface-50 mb-1.5 tracking-[0.05em] uppercase">Empty Workspace</h2>
+              <p className="text-[11px] text-surface-500 font-medium">
+                Start building your architecture.
               </p>
-              
-              <div className="grid grid-cols-2 gap-3 max-w-[300px] mx-auto">
-                <ShortcutHint keyChar="A" label="New Class" />
-                <ShortcutHint keyChar="I" label="New Interface" />
-              </div>
-
-              <div className="mt-10">
-                <button
-                  onClick={() => addEmptyNode('umlClass', { x: window.innerWidth / 2, y: window.innerHeight / 2 })}
-                  className="pointer-events-auto px-6 py-3 bg-brand-600 hover:bg-brand-500 text-white text-[11px] font-bold rounded-xl transition-all active:scale-95 flex items-center gap-2.5 mx-auto shadow-lg shadow-brand-900/20"
-                >
-                  <Plus size={14} strokeWidth={3} />
-                  Add First Class
-                </button>
-              </div>
-            </div>
+            </motion.div>
           </div>
         )}
 
@@ -451,7 +440,7 @@ export default function DiagramCanvas() {
           variant={BackgroundVariant.Dots}
           gap={24}
           size={1}
-          color="rgba(120, 140, 255, 0.05)"
+          color="rgba(255, 255, 255, 0.03)"
         />
 
         {/* Inspector (right side) */}
