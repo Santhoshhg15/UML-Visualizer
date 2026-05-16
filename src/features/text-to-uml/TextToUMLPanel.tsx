@@ -8,7 +8,7 @@ import { interpretNaturalLanguage } from '@/ai/interpreter/interpretNaturalLangu
 import { useDiagramStore } from '@/store';
 import { UMLCodeEditor } from './editor/UMLCodeEditor';
 import { motion, useDragControls } from 'framer-motion';
-import { Zap, Sparkles, ArrowRight, Trash2, X, ChevronDown, Info, Loader2, GripHorizontal, Minimize2, Maximize2, MoveDiagonal2 } from 'lucide-react';
+import { Zap, Sparkles, ArrowRight, Trash2, X, Info, Loader2, Minimize2, Maximize2, MoveDiagonal2 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 
 /**
@@ -31,7 +31,7 @@ export function TextToUMLPanel() {
   // Bidirectional Resizing State
   const [dimensions, setDimensions] = useState({ width: 440, height: 600 });
   const [isResizing, setIsResizing] = useState(false);
-  const [resizeMode, setResizeMode] = useState<'h' | 'v' | 'both' | null>(null);
+  const [, setResizeMode] = useState<'h' | 'v' | 'both' | null>(null);
 
   const { setNodes, setEdges, clearDiagram } = useDiagramStore();
   const { fitView } = useReactFlow();

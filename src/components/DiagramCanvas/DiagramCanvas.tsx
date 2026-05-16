@@ -37,7 +37,7 @@ import { useDiagramStore, useAppStore } from '@/store';
 import { nodeTypes } from '@/nodes';
 import { edgeTypes } from '@/edges';
 import { exportToPNG, exportToSVG } from '@/utils/exportDiagram';
-import { Trash2, Save, FolderOpen, DownloadCloud, UploadCloud, Layout, Loader2, Plus, Copy, MousePointerClick, Layers } from 'lucide-react';
+import { Trash2, Save, FolderOpen, DownloadCloud, UploadCloud, Layout, Loader2, Plus, Copy, Layers } from 'lucide-react';
 import { getLayoutedElements } from '@/utils/elk';
 import { InspectorPanel, MiniMapPanel } from '@/components';
 import { saveToStorage, loadFromStorage } from '@/utils/persistence';
@@ -549,13 +549,3 @@ function ContextMenuItem({ icon, label, shortcut, danger, onClick }: { icon: Rea
   );
 }
 
-/* ── Onboarding Shortcut Hint ── */
-
-function ShortcutHint({ keyChar, label }: { keyChar: string, label: string }) {
-  return (
-    <div className="flex items-center gap-2 px-2 py-1.5 bg-surface-900/30 border border-white/5 rounded-lg">
-      <kbd className="px-1.5 py-0.5 min-w-[18px] bg-surface-800 text-surface-400 text-[9px] font-mono rounded border border-white/5">{keyChar}</kbd>
-      <span className="text-[10px] text-surface-500 font-medium">{label}</span>
-    </div>
-  );
-}
