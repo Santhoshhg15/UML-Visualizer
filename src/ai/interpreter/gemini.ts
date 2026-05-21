@@ -42,8 +42,9 @@ export async function callGemini(userPrompt: string, systemPrompt: string) {
     // Since we forced responseMimeType: application/json, 
     // Gemini should return a valid JSON string.
     return JSON.parse(text);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Gemini API Error:', error);
-    throw new Error(error.message || 'Failed to communicate with Gemini.');
+    const message = error instanceof Error ? error.message : 'Failed to communicate with Gemini.';
+    throw new Error(message, { cause: error });
   }
 }

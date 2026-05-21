@@ -39,7 +39,7 @@ import { edgeTypes } from '@/edges';
 import { exportToPNG, exportToSVG } from '@/utils/exportDiagram';
 import { Trash2, Save, FolderOpen, DownloadCloud, UploadCloud, Layout, Loader2, Plus, Copy, Layers } from 'lucide-react';
 import { getLayoutedElements } from '@/utils/elk';
-import { InspectorPanel, MiniMapPanel } from '@/components';
+import { InspectorPanel } from '@/components';
 import { saveToStorage, loadFromStorage } from '@/utils/persistence';
 import { serializeDiagram, deserializeDiagram } from '@/utils/serialization';
 import { motion } from 'framer-motion';
@@ -116,7 +116,7 @@ export default function DiagramCanvas() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedNodeId, addEmptyNode, removeNode, duplicateNode, screenToFlowPosition]);
+  }, [selectedNodeId, addEmptyNode, removeNode, duplicateNode, screenToFlowPosition, clearDiagram]);
 
   const handleExport = async (type: 'png' | 'svg') => {
     setIsExporting(true);
@@ -446,16 +446,7 @@ export default function DiagramCanvas() {
         {/* Inspector (right side) */}
         <InspectorPanel />
 
-        {/* MiniMap */}
-        <Panel
-          position="bottom-right"
-          style={{ 
-            margin: 'var(--viewport-offset)', 
-            zIndex: 'var(--z-minimap)',
-          }}
-        >
-          <MiniMapPanel containerRef={wrapperRef} />
-        </Panel>
+
 
         {/* Zoom Controls */}
         <Controls

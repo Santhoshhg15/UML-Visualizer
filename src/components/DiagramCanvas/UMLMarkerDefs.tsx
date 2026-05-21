@@ -52,7 +52,7 @@ export function UMLMarkerDefs() {
          * orient="auto" rotates the marker to match the path direction.
          */}
         <marker
-          id="uml-open-triangle"
+          id="uml-hollow-triangle"
           viewBox="0 0 12 12"
           refX="11"
           refY="6"
@@ -66,6 +66,25 @@ export function UMLMarkerDefs() {
             fill="#090c14"
             stroke="#64748b"
             strokeWidth="1"
+            strokeLinejoin="miter"
+          />
+        </marker>
+
+        <marker
+          id="uml-dependency-arrow"
+          viewBox="0 0 12 12"
+          refX="11"
+          refY="6"
+          markerWidth="12"
+          markerHeight="12"
+          orient="auto"
+          markerUnits="userSpaceOnUse"
+        >
+          <path
+            d="M 0 0 L 11 6 L 0 12"
+            fill="none"
+            stroke="#64748b"
+            strokeWidth="1.5"
             strokeLinejoin="miter"
           />
         </marker>

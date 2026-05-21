@@ -201,6 +201,21 @@ body {
   box-shadow: 0 0 0 2px var(--brand-primary), var(--shadow-glow) !important;
 }
 
+/* ── Auto-Layout Transitions ────────────────────────────────── */
+.react-flow__node {
+  /* Smooth transform for layout jumps, calm bezier */
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease;
+}
+.react-flow__node.dragging {
+  /* Instant responsiveness when user is manually dragging */
+  transition: none !important;
+}
+
+.react-flow__edge path {
+  /* Smooth routing changes for edge lines and interaction hitboxes */
+  transition: d 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
 /* ── Shared Input System ──────────────────────────────────── */
 /* Reusable input styles consumed by Sidebar + Inspector.     */
 .editor-input {

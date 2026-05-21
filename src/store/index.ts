@@ -7,3 +7,4 @@
 
 export { useAppStore } from './appStore';
 export { useDiagramStore } from './diagramStore';
+export { useWindowStore, useWindowDepth } from './windowStore';

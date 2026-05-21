@@ -8,11 +8,8 @@ import { MiniMap } from '@xyflow/react';
 import { Map, X } from 'lucide-react';
 import { useAppStore } from '@/store';
 
-interface MiniMapPanelProps {
-  containerRef: React.RefObject<HTMLDivElement | null>;
-}
 
-export default function MiniMapPanel({ containerRef: _ }: MiniMapPanelProps) {
+export default function MiniMapPanel() {
   const isMiniMapOpen = useAppStore((s) => s.isMiniMapOpen);
   const toggleMiniMap = useAppStore((s) => s.toggleMiniMap);
   const isLayouting   = useAppStore((s) => s.isLayouting);

@@ -105,7 +105,7 @@ export function parseTextToUML(text: string): UMLDiagramSchema {
     if (currentClass) {
       if (currentSection === 'attributes') {
         // Matches "- name : String" or "bodyWeight: int"
-        const attrMatch = line.match(/^-?\s*([a-zA-Z0-9_]+)\s*:\s*([a-zA-Z0-9_<>\[\]]+)/);
+        const attrMatch = line.match(/^-?\s*([a-zA-Z0-9_]+)\s*:\s*([a-zA-Z0-9_<>[\]]+)/);
         if (attrMatch) {
           currentClass.attributes.push({
             name: attrMatch[1],
@@ -114,7 +114,7 @@ export function parseTextToUML(text: string): UMLDiagramSchema {
         }
       } else if (currentSection === 'methods') {
         // Matches "- eat() : void" or "sleep()"
-        const methodMatch = line.match(/^-?\s*([a-zA-Z0-9_]+)\s*\([^)]*\)(?:\s*:\s*([a-zA-Z0-9_<>\[\]]+))?/);
+        const methodMatch = line.match(/^-?\s*([a-zA-Z0-9_]+)\s*\([^)]*\)(?:\s*:\s*([a-zA-Z0-9_<>[\]]+))?/);
         if (methodMatch) {
           currentClass.methods.push({
             name: methodMatch[1],

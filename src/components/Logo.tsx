@@ -1,7 +1,7 @@
 /**
  * Logo.tsx
  * ──────────────────────────────────────────────────
- * Refined brand logo for the UML Diagram Visualizer.
+ * Refined brand logo for ArchSpace.
  */
 
 import { motion } from 'framer-motion';
@@ -53,10 +53,10 @@ export default function Logo() {
 
       <div className="flex flex-col -gap-1">
         <span className="text-[15px] font-black tracking-tight text-surface-50 leading-none">
-          UML CANVAS
+          ARCHSPACE
         </span>
         <span className="text-[9px] font-bold tracking-[0.2em] text-brand-400 uppercase leading-none opacity-80">
-          Visual Engine
+          Workspace
         </span>
       </div>
     </motion.div>

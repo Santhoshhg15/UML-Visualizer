@@ -40,7 +40,7 @@ export default function InheritanceEdge({
     targetX,
     targetY,
     targetPosition,
-    borderRadius: 8,
+    borderRadius: 0,
   });
 
   const reversed = Boolean((data as { reversed?: boolean } | undefined)?.reversed);

@@ -41,7 +41,8 @@
   /* ── Panel Sizing ─────────────────────────────────────────── */
   /* Fixed dimensions for structural workspace panels.          */
   --sidebar-width:    64px;
-  --inspector-width:  280px;
+  --inspector-width:  250px;
+  --inspector-height: calc(100dvh - 64px);
   --toolbar-height:    48px;
   --minimap-width:    160px;
   --minimap-height:   110px;

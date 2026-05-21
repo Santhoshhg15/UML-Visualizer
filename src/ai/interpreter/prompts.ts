@@ -19,9 +19,9 @@ Your output must be compatible with JSON.parse().
   ],
   "relationships": [
     {
-      "type": "extends" | "implements",
-      "source": "string (child/implementation ID)",
-      "target": "string (parent/interface ID)"
+      "type": "extends" | "implements" | "dependency",
+      "source": "string (child/implementation/dependent ID)",
+      "target": "string (parent/interface/provider ID)"
     }
   ]
 }
@@ -29,20 +29,28 @@ Your output must be compatible with JSON.parse().
 ### RULES
 1. **Determinism**: Map "X is a Y" or "X inherits from Y" to "extends".
 2. **Realization**: Map "X implements Y" or "X realizes Y" to "implements".
-3. **Types**: If a node is explicitly called an "Interface", set type to "interface".
-4. **Semantics**: Ensure relationship directions are correct: source is the child, target is the parent.
-5. **IDs**: Normalize IDs to PascalCase (e.g., 'ElectricCar').
+3. **Dependency**: Map "X depends on Y", "X uses Y", or "X requires Y" to "dependency".
+4. **Types**: If a node is explicitly called an "Interface", set type to "interface".
+5. **Members**: Extract any mentioned attributes and methods. If type/returnType isn't specified, use "any" or guess based on name (e.g. "name" -> "string").
+6. **Semantics**: Ensure relationship directions are correct: source is the child/dependent, target is the parent/provider.
+7. **IDs**: Normalize IDs to PascalCase (e.g., 'ElectricCar').
 
 ### EXAMPLE
-Input: "Create a class Animal. Create a Tiger that extends Animal."
+Input: "Create a PaymentService interface with a process method returning boolean. OrderService depends on PaymentService. OrderService has an amount number attribute."
 Output:
 {
   "classes": [
-    { "id": "Animal", "name": "Animal", "type": "class", "attributes": [], "methods": [] },
-    { "id": "Tiger", "name": "Tiger", "type": "class", "attributes": [], "methods": [] }
+    { 
+      "id": "PaymentService", "name": "PaymentService", "type": "interface", 
+      "attributes": [], "methods": [{ "name": "process", "returnType": "boolean" }] 
+    },
+    { 
+      "id": "OrderService", "name": "OrderService", "type": "class", 
+      "attributes": [{ "name": "amount", "type": "number" }], "methods": [] 
+    }
   ],
   "relationships": [
-    { "type": "extends", "source": "Tiger", "target": "Animal" }
+    { "type": "dependency", "source": "OrderService", "target": "PaymentService" }
   ]
 }
 `;

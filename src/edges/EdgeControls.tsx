@@ -29,7 +29,7 @@ interface EdgeControlsProps {
   id: string;
   labelX: number;
   labelY: number;
-  edgeType: 'extends' | 'implements';
+  edgeType: 'extends' | 'implements' | 'dependency';
   /** true = arrowhead at source end (visually reversed) */
   reversed: boolean;
   /** Driven by parent edge's lineHovered state */
@@ -66,7 +66,7 @@ export default function EdgeControls({
     removeEdge(id);
   }, [id, removeEdge]);
 
-  const relationLabel = edgeType === 'extends' ? 'Inheritance' : 'Realization';
+  const relationLabel = edgeType === 'extends' ? 'Inheritance' : edgeType === 'implements' ? 'Realization' : 'Dependency';
   const chevronDeg    = reversed ? 180 : 0;
 
   return (

@@ -59,14 +59,17 @@ export default function InspectorPanel() {
   };
 
   return (
-    <Panel position="top-right" className="m-0" style={{ zIndex: 'var(--z-panel)', top: 0, right: 0 }}>
+    <Panel position="top-right" className="m-4" style={{ zIndex: 'var(--z-panel)' }}>
       <div
         className="flex flex-col bg-surface-900/40 backdrop-blur-xl"
         style={{
           width:        'var(--inspector-width)',
-          height:       '100dvh',
-          borderLeft:   'var(--panel-border)',
+          height:       'fit-content',
+          maxHeight:    'calc(100dvh - 32px)',
+          border:       'var(--panel-border)',
+          borderRadius: 'var(--radius-xl)',
           background:   'var(--panel-bg)',
+          overflow:     'hidden',
         }}
       >
         {/* ── Header ── */}

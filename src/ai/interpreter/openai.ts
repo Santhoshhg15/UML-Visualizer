@@ -42,8 +42,9 @@ export async function callOpenAI(userPrompt: string, systemPrompt: string) {
     }
 
     return JSON.parse(content);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('OpenAI API Error:', error);
-    throw new Error(error.message || 'Failed to communicate with OpenAI.');
+    const message = error instanceof Error ? error.message : 'Failed to communicate with OpenAI.';
+    throw new Error(message, { cause: error });
   }
 }

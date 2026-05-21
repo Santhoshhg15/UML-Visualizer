@@ -162,8 +162,8 @@ function Nav() {
             background: T.accent,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             color: '#fff', fontWeight: 700, fontSize: 11,
-          }}>UC</div>
-          <span style={{ color: T.text, fontWeight: 600, fontSize: 15, letterSpacing: '-0.01em' }}>UMLCanvas</span>
+          }}>AS</div>
+          <span style={{ color: T.text, fontWeight: 600, fontSize: 15, letterSpacing: '-0.01em' }}>ArchSpace</span>
         </div>
 
         {/* Right */}
@@ -247,8 +247,8 @@ function Hero() {
           color: T.text, margin: '0 0 20px',
           letterSpacing: '-0.03em',
         }}>
-          Model software<br />
-          <span style={{ color: '#33334d' }}>architectures.</span>
+          The AI workspace<br />
+          <span style={{ color: '#33334d' }}>for software architecture.</span>
         </h1>
 
         {/* Subtext */}
@@ -257,7 +257,7 @@ function Hero() {
           maxWidth: 480, margin: '0 auto 36px',
           lineHeight: 1.6,
         }}>
-          A precision-engineered UML visualizer.<br />No account needed.
+          An intelligent platform for domain-driven design,<br />service modeling, and system planning.
         </p>
 
         {/* CTA buttons */}
@@ -381,18 +381,18 @@ function Features() {
   const rows = [
     {
       icon:  <Zap size={20} color={T.accent} />,
-      title: 'Magic Auto Layout',
-      body:  'ELK.js resolves complex hierarchies instantly. Clean diagrams at any scale.',
+      title: 'Microservice Modeling',
+      body:  'Design massive distributed systems with ease. Auto-layout resolves complex hierarchies instantly.',
     },
     {
       icon:  <GitBranch size={20} color={T.accent} />,
-      title: 'UML Compliance',
-      body:  'Hollow triangles, dashed realization lines — pixel-perfect UML notation every time.',
+      title: 'Architecture Intelligence',
+      body:  'AI-assisted refactoring suggestions and domain-driven design visualization powered by Gemini.',
     },
     {
       icon:  <Download size={20} color={T.accent} />,
       title: 'High-Fidelity Exports',
-      body:  'Export clean SVG or high-res PNG. UI chrome filtered out automatically.',
+      body:  'Export clean SVG or high-res PNG. Ready for your engineering documentation.',
     },
   ];
 
@@ -406,7 +406,7 @@ function Features() {
         <p data-reveal style={{
           fontSize: 11, letterSpacing: '0.15em', color: T.accent,
           fontWeight: 600, textTransform: 'uppercase', marginBottom: 12,
-        }}>WHY UMLCANVAS</p>
+        }}>WHY ARCHSPACE</p>
 
         {/* Heading */}
         <h2 data-reveal data-delay="1" style={{
@@ -416,7 +416,7 @@ function Features() {
           letterSpacing: '-0.025em',
           marginBottom: 60,
         }}>
-          Built for architects who<br />prioritize speed.
+          Built for architects who<br />demand precision.
         </h2>
 
         {/* Rows */}
@@ -537,8 +537,8 @@ function Footer() {
         }}>
           {/* Left */}
           <div>
-            <div style={{ fontWeight: 600, color: T.text, fontSize: 14, marginBottom: 2 }}>UMLCanvas</div>
-            <div style={{ color: T.muted, fontSize: 13 }}>The engineering visualizer for modern architects.</div>
+            <div style={{ fontWeight: 600, color: T.text, fontSize: 14, marginBottom: 2 }}>ArchSpace</div>
+            <div style={{ color: T.muted, fontSize: 13 }}>The AI workspace for software architecture.</div>
           </div>
 
           {/* Right: links */}
@@ -557,7 +557,7 @@ function Footer() {
         <div className="footer-copy" style={{
           textAlign: 'right', fontSize: 12, color: '#555566',
         }}>
-          © 2024 UMLCanvas Visual Engine.
+          © 2026 ArchSpace.
         </div>
       </div>
     </footer>

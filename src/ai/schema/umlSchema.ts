@@ -41,7 +41,7 @@ export interface UMLClass {
 }
 
 export interface UMLRelationship {
-  type: 'extends' | 'implements'; // Future extensions: 'composition' | 'aggregation' | 'dependency'
+  type: 'extends' | 'implements' | 'dependency'; // Future extensions: 'composition' | 'aggregation'
   source: string; // Semantic ID of the source class/interface
   target: string; // Semantic ID of the target class/interface
 }

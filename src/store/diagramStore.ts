@@ -39,6 +39,15 @@ interface DiagramState {
   addEmptyNode: (type: 'umlClass' | 'umlInterface' | 'umlAbstract', position?: { x: number; y: number }) => void;
   addMember: (nodeId: string, memberType: 'attributes' | 'methods') => void;
 
+  /* ── History Actions ── */
+  past: { nodes: Node[], edges: Edge[] }[];
+  future: { nodes: Node[], edges: Edge[] }[];
+  pushHistory: () => void;
+  undo: () => void;
+  redo: () => void;
+  canUndo: () => boolean;
+  canRedo: () => boolean;
+
   /* ── Persistence Actions ── */
   loadDiagram: (nodes: Node[], edges: Edge[]) => void;
 }
@@ -50,7 +59,52 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
   nodes: initialData?.nodes || [],
   edges: initialData?.edges || [],
 
+  /* ── History State ── */
+  past: [],
+  future: [],
+  
+  canUndo: () => get().past.length > 0,
+  canRedo: () => get().future.length > 0,
+
+  pushHistory: () => {
+    const { nodes, edges, past } = get();
+    set({
+      past: [...past, { nodes, edges }].slice(-50), // Keep max 50 states
+      future: [],
+    });
+  },
+
+  undo: () => {
+    const { past, future, nodes, edges } = get();
+    if (past.length === 0) return;
+    const previous = past[past.length - 1];
+    set({
+      past: past.slice(0, past.length - 1),
+      future: [{ nodes, edges }, ...future],
+      nodes: previous.nodes,
+      edges: previous.edges,
+      selectedNodeId: null,
+    });
+  },
+
+  redo: () => {
+    const { past, future, nodes, edges } = get();
+    if (future.length === 0) return;
+    const next = future[0];
+    set({
+      past: [...past, { nodes, edges }],
+      future: future.slice(1),
+      nodes: next.nodes,
+      edges: next.edges,
+      selectedNodeId: null,
+    });
+  },
+
   onNodesChange: (changes) => {
+    const isDragStop = changes.some((c) => c.type === 'position' && c.dragging === false);
+    if (isDragStop) {
+      get().pushHistory();
+    }
     set({ nodes: applyNodeChanges(changes, get().nodes) });
   },
 
@@ -79,17 +133,22 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
     const edgeType: 'extends' | 'implements' =
       isInterface(sourceNode) || isInterface(targetNode) ? 'implements' : 'extends';
 
+    get().pushHistory();
     set({ edges: addEdge({ ...connection, type: edgeType }, get().edges) });
   },
 
-  setNodes: (nodes) => set((state) => ({ 
-    nodes: typeof nodes === 'function' ? nodes(state.nodes) : nodes 
-  })),
-  setEdges: (edges) => set((state) => ({ 
-    edges: typeof edges === 'function' ? edges(state.edges) : edges 
-  })),
+  setNodes: (nodes) => {
+    // History should be explicitly pushed by the caller for bulk operations
+    set((state) => ({ nodes: typeof nodes === 'function' ? nodes(state.nodes) : nodes }));
+  },
+  setEdges: (edges) => {
+    set((state) => ({ edges: typeof edges === 'function' ? edges(state.edges) : edges }));
+  },
   
-  addNode: (node) => set({ nodes: [...get().nodes, node] }),
+  addNode: (node) => {
+    get().pushHistory();
+    set({ nodes: [...get().nodes, node] });
+  },
   
   addRelationship: (sourceId, targetId, type) => {
     const newEdge: Edge = {
@@ -98,6 +157,7 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
       target: targetId,
       type,
     };
+    get().pushHistory();
     set({ edges: [...get().edges, newEdge] });
   },
 
@@ -105,6 +165,7 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
   selectedNodeId: null,
   setSelectedNodeId: (id) => set({ selectedNodeId: id }),
   updateNodeData: (id, data) => {
+    get().pushHistory();
     set({
       nodes: get().nodes.map((node) => {
         if (node.id === id) {
@@ -133,6 +194,7 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
       selected: true,
     };
 
+    get().pushHistory();
     set({
       nodes: [...get().nodes.map((n) => ({ ...n, selected: false })), newNode],
       selectedNodeId: newNode.id,
@@ -159,6 +221,7 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
       selected: true,
     };
 
+    get().pushHistory();
     set({
       nodes: [...get().nodes.map((n) => ({ ...n, selected: false })), newNode],
       selectedNodeId: id,
@@ -184,6 +247,7 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
       }
       return node;
     });
+    get().pushHistory();
     set({ nodes });
   },
 
@@ -193,16 +257,22 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
    * If we don't, React Flow will crash or attempt to render "floating" edges
    * to non-existent DOM elements.
    */
-  removeNode: (nodeId) => set({
-    nodes: get().nodes.filter((n) => n.id !== nodeId),
-    edges: get().edges.filter((e) => e.source !== nodeId && e.target !== nodeId),
-  }),
+  removeNode: (nodeId) => {
+    get().pushHistory();
+    set({
+      nodes: get().nodes.filter((n) => n.id !== nodeId),
+      edges: get().edges.filter((e) => e.source !== nodeId && e.target !== nodeId),
+    });
+  },
 
-  removeEdge: (edgeId) => set({
-    edges: get().edges.filter((e) => e.id !== edgeId),
-  }),
+  removeEdge: (edgeId) => {
+    get().pushHistory();
+    set({ edges: get().edges.filter((e) => e.id !== edgeId) });
+  },
   
-  swapEdgeDirection: (edgeId) => set({
+  swapEdgeDirection: (edgeId) => {
+    get().pushHistory();
+    set({
     edges: get().edges.map((e) => {
       if (e.id !== edgeId) return e;
       /*
@@ -217,11 +287,18 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
       const d = (e.data ?? {}) as Record<string, unknown>;
       return { ...e, data: { ...d, reversed: !d.reversed } };
     }),
-  }),
+    });
+  },
 
-  clearDiagram: () => set({ nodes: [], edges: [], selectedNodeId: null }),
+  clearDiagram: () => {
+    get().pushHistory();
+    set({ nodes: [], edges: [], selectedNodeId: null });
+  },
 
-  loadDiagram: (nodes, edges) => set({ nodes, edges }),
+  loadDiagram: (nodes, edges) => {
+    get().pushHistory();
+    set({ nodes, edges });
+  },
 }));
 
 /**

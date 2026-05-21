@@ -22,6 +22,7 @@
 import type { EdgeTypes } from '@xyflow/react';
 import InheritanceEdge from './InheritanceEdge';
 import ImplementsEdge from './ImplementsEdge';
+import DependencyEdge from './DependencyEdge';
 
 /**
  * Custom edge type registry.
@@ -30,8 +31,10 @@ import ImplementsEdge from './ImplementsEdge';
 export const edgeTypes: EdgeTypes = {
   extends: InheritanceEdge,
   implements: ImplementsEdge,
+  dependency: DependencyEdge,
 };
 
 /* Re-export for direct usage if needed */
 export { default as InheritanceEdge } from './InheritanceEdge';
 export { default as ImplementsEdge } from './ImplementsEdge';
+export { default as DependencyEdge } from './DependencyEdge';
