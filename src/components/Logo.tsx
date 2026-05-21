@@ -14,7 +14,7 @@ export default function Logo() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <img src="/logo.png" alt="ArchSpace Logo" className="h-64 shrink-0" style={{ objectFit: 'contain', margin: '-64px', transform: 'translate(24px, -16px)' }} />
+      <img src="/logo.png" alt="ArchSpace Logo" className="h-64 shrink-0" style={{ objectFit: 'contain', margin: '-64px', transform: 'translate(24px, -16px) scale(1.4)' }} />
     </motion.div>
   );
 }
