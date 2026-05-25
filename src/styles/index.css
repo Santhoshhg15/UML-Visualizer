@@ -49,8 +49,8 @@
 
   --border-subtle: var(--subtle-border);
 
-  --shadow-node:  0 4px 12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(120, 140, 255, 0.08);
-  --shadow-panel: 0 24px 48px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(120, 140, 255, 0.1);
+  --shadow-node:  0 8px 24px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(148, 163, 184, 0.05);
+  --shadow-panel: 0 12px 32px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(148, 163, 184, 0.05);
   --shadow-glow:  0 0 20px rgba(79, 124, 255, 0.1);
 }
 
@@ -223,7 +223,7 @@ body {
   width: 100%;
   border-radius: var(--radius-md);
   border: var(--divider-width) solid var(--subtle-border);
-  background-color: rgba(13, 18, 35, 0.4);
+  background-color: rgba(11, 16, 32, 0.4);
   padding: 0 var(--space-3);
   font-size: var(--text-sm);
   color: var(--text-primary);
@@ -233,7 +233,7 @@ body {
 
 .editor-input:focus {
   border-color: var(--brand-primary);
-  background-color: rgba(13, 18, 35, 0.6);
+  background-color: rgba(11, 16, 32, 0.6);
   box-shadow: 0 0 0 1px var(--brand-primary);
 }
 
@@ -247,7 +247,7 @@ body {
   max-height: var(--textarea-max-h);
   border-radius: var(--radius-md);
   border: var(--divider-width) solid var(--subtle-border);
-  background-color: rgba(13, 18, 35, 0.4);
+  background-color: rgba(11, 16, 32, 0.4);
   padding: var(--space-2) var(--space-3);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: var(--text-sm);
@@ -263,7 +263,7 @@ body {
 
 .editor-textarea:focus {
   border-color: var(--brand-primary);
-  background-color: rgba(13, 18, 35, 0.6);
+  background-color: rgba(11, 16, 32, 0.6);
   box-shadow: 0 0 0 1px var(--brand-primary);
 }
 
@@ -275,7 +275,7 @@ body {
 /* ── Shared Label System ──────────────────────────────────── */
 .editor-label {
   font-size: var(--text-2xs);
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--color-surface-500);

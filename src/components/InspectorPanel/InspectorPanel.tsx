@@ -83,7 +83,7 @@ export default function InspectorPanel() {
         >
           <span
             className="text-surface-50 select-none"
-            style={{ fontSize: 'var(--text-sm)', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' }}
+            style={{ fontSize: 'var(--text-sm)', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}
           >
             Inspector
           </span>
@@ -197,7 +197,7 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
       className="text-surface-500 select-none mb-4"
       style={{
         fontSize:      '10px',
-        fontWeight:    700,
+        fontWeight:    600,
         letterSpacing: '0.1em',
         textTransform: 'uppercase',
         paddingBottom: 'var(--space-2)',

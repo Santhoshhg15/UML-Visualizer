@@ -1,194 +1,110 @@
 /**
  * LandingPage/index.tsx
  * ─────────────────────────────────────────────────────────────
- * Redesigned per spec:
- *   • Minimal fixed navbar (logo + links + outlined button)
- *   • Full-viewport centered hero (badge → headline → sub → CTA → preview)
- *   • Features section — 3 clean rows, no cards, divider lines
- *   • Closing CTA — dark surface, centered
- *   • One-line footer
- *
- * Animations: Intersection Observer only — no new packages.
- *
- * Design tokens
- *   bg:        #0a0a0f
- *   surface:   #111118
- *   border:    #1e1e2e
- *   text:      #ffffff / #888899
- *   accent:    #3b82f6
- *   container: max-width 1200px, padding 0 48px
- * ─────────────────────────────────────────────────────────────
+ * Redesigned per spec: Premium AI-powered architecture workspace.
+ * "Describe software architecture → AI generates UML diagrams"
  */
 
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useRef } from 'react';
-import { Zap, GitBranch, Download, ArrowRight } from 'lucide-react';
+import { Play, Sparkles, Layers, Lock } from 'lucide-react';
 
-/* ─── Tokens (inline for self-contained isolation) ───────────── */
+/* ─── Tokens ─────────────────────────────────────────────── */
 const T = {
-  bg:       '#0a0a0f',
-  gradient: 'linear-gradient(135deg, #4E3C73 0%, #2B5876 100%)',
-  surface:  'rgba(17, 17, 24, 0.4)',
-  border:   'rgba(255, 255, 255, 0.08)',
-  text:     '#ffffff',
-  muted:    '#d1d1e0',
-  accent:   '#60a5fa',
-  glow:     'rgba(96,165,250,0.15)',
-} as const;
-
-/* ─── Container ──────────────────────────────────────────────── */
-const container: React.CSSProperties = {
-  maxWidth: 1200,
-  margin:   '0 auto',
-  padding:  '0 48px',
+  bg:       '#0B1020',
+  surface:  'rgba(15, 23, 42, 0.72)',
+  primary:  '#4F7CFF',
+  accent:   '#38BDF8',
+  text:     '#F8FAFC',
+  muted:    '#94A3B8',
+  border:   'rgba(148, 163, 184, 0.08)',
 };
-const containerSm: React.CSSProperties = { ...container, padding: '0 24px' };
 
-/* ─── Scroll-animation hook ──────────────────────────────────── */
-/**
- * Adds `.is-visible` to every element matching `selector` inside
- * `rootRef` when it crosses into the viewport.
- * Elements should start with opacity:0 via their className.
- */
-function useReveal(rootRef: React.RefObject<HTMLElement | null>, selector = '[data-reveal]') {
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-    const els = Array.from(root.querySelectorAll<HTMLElement>(selector));
-    if (!els.length) return;
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            (e.target as HTMLElement).classList.add('is-visible');
-            io.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0.15 },
-    );
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, [rootRef, selector]);
-}
-
-/* ─── Global animation CSS (injected once) ───────────────────── */
 function AnimationStyles() {
   return (
     <style>{`
-      /*
-       * ── Smooth scroll ────────────────────────────────────────
-       * scroll-behavior: smooth  → all anchor (#) clicks glide
-       * scroll-padding-top       → offsets the 64px fixed navbar
-       *   so sections don't hide behind it on arrival
-       */
-      html {
-        scroll-behavior: smooth;
-        scroll-padding-top: 72px;
-      }
-
-      /* Reveal base — elements start hidden */
-      [data-reveal] {
-        opacity: 0;
-        transform: translateY(24px);
-        transition: opacity 600ms ease-out, transform 600ms ease-out;
-      }
-      [data-reveal="scale"] {
-        transform: scale(0.97) translateY(12px);
-        transition: opacity 500ms ease-out, transform 500ms ease-out;
-      }
-      [data-reveal].is-visible {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-      /* Stagger delays */
-      [data-delay="1"] { transition-delay: 100ms; }
-      [data-delay="2"] { transition-delay: 200ms; }
-      [data-delay="3"] { transition-delay: 300ms; }
-      [data-delay="4"] { transition-delay: 500ms; }
-      [data-delay="5"] { transition-delay: 600ms; }
-
-      /* Hero — trigger immediately on load */
-      [data-hero-reveal] {
-        opacity: 0;
-        transform: translateY(24px);
-        transition: opacity 600ms ease-out, transform 600ms ease-out;
-      }
-      [data-hero-reveal].is-visible { opacity: 1; transform: translateY(0); }
-
-      /* Float animation for canvas preview */
-      @keyframes float {
+      html { scroll-behavior: smooth; }
+      
+      @keyframes float-slow {
         0%, 100% { transform: translateY(0px); }
-        50%       { transform: translateY(-10px); }
+        50% { transform: translateY(-12px); }
       }
-      .float-anim { animation: float 3s ease-in-out infinite; }
+      @keyframes float-medium {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); }
+      }
+      @keyframes pulse-glow {
+        0%, 100% { opacity: 0.5; box-shadow: 0 0 20px rgba(56,189,248, 0.1); }
+        50% { opacity: 1; box-shadow: 0 0 40px rgba(56,189,248, 0.3); }
+      }
+      @keyframes dash-flow {
+        to { stroke-dashoffset: -20; }
+      }
 
-      /* Responsive */
-      @media (max-width: 768px) {
-        .nav-links   { display: none !important; }
-        .hero-canvas { max-width: 100% !important; }
-        .feat-row    { flex-direction: column !important; gap: 12px !important; }
-        .footer-inner { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 24px !important; }
-        .footer-copy  { text-align: center !important; }
+      .float-slow { animation: float-slow 6s ease-in-out infinite; }
+      .float-medium { animation: float-medium 4s ease-in-out infinite; }
+      .float-delay-1 { animation-delay: -2s; }
+      .float-delay-2 { animation-delay: -4s; }
+      
+      .reveal {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: reveal-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+      @keyframes reveal-up {
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .delay-1 { animation-delay: 0.1s; }
+      .delay-2 { animation-delay: 0.2s; }
+      .delay-3 { animation-delay: 0.3s; }
+      
+      @media (max-width: 1024px) {
+        .hero-split { flex-direction: column !important; padding-top: 120px !important; }
+        .hero-copy { text-align: center; align-items: center; max-width: 100% !important; margin-bottom: 64px; }
+        .hero-preview { position: relative !important; right: auto !important; width: 100% !important; height: 500px !important; transform: none !important; margin-left: 0 !important; border-radius: 16px !important; }
+        .nav-links { display: none !important; }
+        .showcase-grid { grid-template-columns: 1fr !important; gap: 48px !important; }
+        .flow-line { display: none; }
       }
     `}</style>
   );
 }
 
-/* ─── Navbar ──────────────────────────────────────────────────── */
 function Nav() {
   const navigate = useNavigate();
   return (
     <nav style={{
-      position:       'fixed',
-      top:            0,
-      left:           0,
-      right:          0,
-      zIndex:         100,
-      height:         64,
-      display:        'flex',
-      alignItems:     'center',
-      background:     'rgba(20, 20, 35, 0.4)',
-      backdropFilter: 'blur(20px)',
-      WebkitBackdropFilter: 'blur(20px)',
-      borderBottom:   `1px solid rgba(255, 255, 255, 0.05)`,
+      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, height: 72,
+      display: 'flex', alignItems: 'center',
+      background: 'rgba(11, 16, 32, 0.6)', backdropFilter: 'blur(20px)',
+      borderBottom: `1px solid ${T.border}`,
     }}>
-      <div style={{ ...container, display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-        {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{
-            width: 28, height: 28, borderRadius: 6,
-            background: T.accent,
+            width: 32, height: 32, borderRadius: 8, background: T.primary,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: '#fff', fontWeight: 700, fontSize: 11,
+            color: '#fff', fontWeight: 700, fontSize: 13,
           }}>AS</div>
-          <span style={{ color: T.text, fontWeight: 600, fontSize: 15, letterSpacing: '-0.01em' }}>ArchSpace</span>
+          <span style={{ color: T.text, fontWeight: 600, fontSize: 16, letterSpacing: '-0.01em' }}>ArchSpace</span>
         </div>
 
-        {/* Right */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 40 }}>
           <div className="nav-links" style={{ display: 'flex', gap: 32 }}>
-            {['Features', 'Workflow'].map((l) => (
-              <a key={l} href={`#${l.toLowerCase()}`}
-                style={{ color: T.muted, fontSize: 14, textDecoration: 'none', transition: 'color 150ms' }}
-                onMouseEnter={e => (e.currentTarget.style.color = T.text)}
-                onMouseLeave={e => (e.currentTarget.style.color = T.muted)}
-              >{l}</a>
-            ))}
+            <span style={{ color: T.text, fontSize: 14, cursor: 'pointer' }}>Product</span>
+            <span style={{ color: T.muted, fontSize: 14, cursor: 'pointer' }}>Documentation</span>
+            <span style={{ color: T.muted, fontSize: 14, cursor: 'pointer' }}>Changelog</span>
           </div>
           <button
             onClick={() => navigate('/editor')}
             style={{
-              border: `1px solid ${T.accent}`, color: T.accent,
-              background: 'transparent', padding: '8px 20px',
-              borderRadius: 6, fontSize: 14, fontWeight: 500,
-              cursor: 'pointer', transition: 'background 200ms ease, color 200ms ease',
+              color: T.text, background: 'transparent', padding: '8px 16px',
+              borderRadius: 6, fontSize: 14, fontWeight: 500, cursor: 'pointer',
+              border: `1px solid ${T.border}`, transition: 'all 200ms ease',
             }}
-            onMouseEnter={e => { e.currentTarget.style.background = T.accent; e.currentTarget.style.color = '#fff'; }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = T.accent; }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = T.muted; e.currentTarget.style.background = T.surface; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.background = 'transparent'; }}
           >
-            Launch Editor →
+            Sign In
           </button>
         </div>
       </div>
@@ -196,385 +112,318 @@ function Nav() {
   );
 }
 
-/* ─── Hero ────────────────────────────────────────────────────── */
-function Hero() {
-  const navigate  = useNavigate();
-  const heroRef   = useRef<HTMLElement>(null);
-
-  /* Trigger hero reveals after mount (not on scroll) */
-  useEffect(() => {
-    const el = heroRef.current;
-    if (!el) return;
-    const items = el.querySelectorAll('[data-hero-reveal]');
-    items.forEach((item, i) => {
-      setTimeout(() => item.classList.add('is-visible'), i * 100);
-    });
-  }, []);
-
+function WorkspacePreview() {
   return (
-    <section ref={heroRef} style={{
-      minHeight:      '100vh',
-      display:        'flex',
-      flexDirection:  'column',
-      alignItems:     'center',
-      justifyContent: 'center',
-      textAlign:      'center',
-      paddingTop:     120,
-      paddingBottom:  100,
-      background:     'transparent',
-      position:       'relative',
-      /* No overflow:hidden — clips large clamp() headlines */
+    <div className="hero-preview float-slow" style={{
+      position: 'absolute', top: '50%', right: -80, transform: 'translateY(-50%)',
+      width: '60vw', maxWidth: 900, height: '80vh', maxHeight: 800,
+      background: '#0B1020', borderRadius: '32px 0 0 32px',
+      border: `1px solid ${T.border}`, borderRight: 'none',
+      boxShadow: '0 24px 80px rgba(0,0,0,0.4)',
+      overflow: 'hidden', display: 'flex',
     }}>
-      {/* Ambient glow */}
-      <div style={{
-        position:   'absolute', inset: 0, pointerEvents: 'none',
-        background: `radial-gradient(ellipse 70% 50% at 50% 40%, rgba(255, 255, 255, 0.03) 0%, transparent 70%)`,
-      }} />
-
-      <div style={{ ...containerSm, display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', zIndex: 1 }}>
-        {/* Version badge */}
-        <div data-hero-reveal data-delay="0" style={{
-          display: 'inline-block',
-          fontSize: 11, letterSpacing: '0.15em', color: T.muted,
-          border: `1px solid ${T.border}`, padding: '4px 14px',
-          borderRadius: 100, marginBottom: 28,
-        }}>✦ VERSION 2.0 IS LIVE</div>
-
-        {/* Headline */}
-        <h1 data-hero-reveal data-delay="1" style={{
-          fontSize: 'clamp(52px, 8vw, 96px)',
-          fontWeight: 800, lineHeight: 1.05,
-          color: T.text, margin: '0 0 20px',
-          letterSpacing: '-0.03em',
-        }}>
-          The AI workspace<br />
-          <span style={{ color: '#33334d' }}>for software architecture.</span>
-        </h1>
-
-        {/* Subtext */}
-        <p data-hero-reveal data-delay="2" style={{
-          fontSize: 18, color: T.muted,
-          maxWidth: 480, margin: '0 auto 36px',
-          lineHeight: 1.6,
-        }}>
-          An intelligent platform for domain-driven design,<br />service modeling, and system planning.
-        </p>
-
-        {/* CTA buttons */}
-        <div data-hero-reveal data-delay="3" style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 64 }}>
-          <button
-            onClick={() => navigate('/editor')}
-            style={{
-              background: T.accent, color: '#fff',
-              padding: '12px 28px', borderRadius: 8,
-              fontWeight: 600, fontSize: 15, border: 'none',
-              cursor: 'pointer',
-              transition: 'filter 200ms ease, transform 200ms ease, box-shadow 200ms ease',
-              display: 'flex', alignItems: 'center', gap: 8,
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.filter = 'brightness(1.1)';
-              e.currentTarget.style.transform = 'scale(1.02)';
-              e.currentTarget.style.boxShadow = '0 0 20px rgba(59,130,246,0.4)';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.filter = '';
-              e.currentTarget.style.transform = '';
-              e.currentTarget.style.boxShadow = '';
-            }}
-          >
-            Start Building <ArrowRight size={16} />
-          </button>
-
-          <a href="#features"
-            style={{
-              background: 'transparent', color: T.text,
-              padding: '12px 28px', borderRadius: 8,
-              fontWeight: 500, fontSize: 15,
-              border: `1px solid ${T.border}`,
-              textDecoration: 'none',
-              transition: 'border-color 200ms ease, color 200ms ease',
-              display: 'flex', alignItems: 'center', gap: 6,
-            }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = T.accent; e.currentTarget.style.color = T.accent; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.color = T.text; }}
-          >
-            Explore the engine ›
-          </a>
-        </div>
-
-        {/* Canvas preview */}
-        <div data-hero-reveal data-delay="4"
-          className="float-anim hero-canvas"
-          style={{
-            maxWidth: 680, width: '100%',
-            borderRadius: 12,
-            border: `1px solid ${T.border}`,
-            boxShadow: '0 24px 80px rgba(0,0,0,0.6)',
-            overflow: 'hidden',
-          }}
-        >
-          {/* Window chrome */}
-          <div style={{
-            background: T.surface, padding: '12px 16px',
-            borderBottom: `1px solid ${T.border}`,
-            display: 'flex', alignItems: 'center', gap: 6,
-          }}>
-            {['#3B3B3B', '#3B3B3B', '#3B3B3B'].map((c, i) => (
-              <span key={i} style={{ width: 10, height: 10, borderRadius: '50%', background: c, display: 'inline-block' }} />
-            ))}
-            <div style={{ marginLeft: 10, height: 14, width: 120, background: 'rgba(255,255,255,0.05)', borderRadius: 4 }} />
-          </div>
-          <EditorMockup />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─── Static editor mockup ────────────────────────────────────── */
-function EditorMockup() {
-  const nodes = [
-    { id: 'n1', label: 'Vehicle', stereotype: 'abstract', x: 50,  y: 28 },
-    { id: 'n2', label: 'Car',     x: 18,  y: 160 },
-    { id: 'n3', label: 'Truck',   x: 152, y: 160 },
-  ];
-  return (
-    <div style={{ position: 'relative', background: '#090909', height: 280, overflow: 'hidden' }}>
+      {/* Grid Background */}
       <div style={{
         position: 'absolute', inset: 0,
-        backgroundImage: 'radial-gradient(circle, #1e2030 1px, transparent 1px)',
-        backgroundSize:  '24px 24px', opacity: 0.25,
+        backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)',
+        backgroundSize: '24px 24px',
       }} />
-      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.4 }}>
-        <line x1="115" y1="96"  x2="74"  y2="160" stroke="#4B5563" strokeWidth="1.5" />
-        <line x1="140" y1="96"  x2="200" y2="160" stroke="#4B5563" strokeWidth="1.5" />
+
+      {/* SVG Connecting Lines */}
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+        <path d="M 280 240 Q 380 240 380 340 T 480 340" fill="none" stroke={T.primary} strokeWidth="2" opacity="0.6" style={{ strokeDasharray: '4 4', animation: 'dash-flow 1s linear infinite' }} />
+        <path d="M 280 240 Q 380 240 380 140 T 480 140" fill="none" stroke={T.muted} strokeWidth="1.5" opacity="0.3" />
+        <circle cx="280" cy="240" r="4" fill={T.primary} />
+        <circle cx="480" cy="340" r="4" fill={T.primary} />
+        <circle cx="480" cy="140" r="4" fill={T.muted} />
       </svg>
-      {nodes.map(n => (
-        <div key={n.id} style={{
-          position: 'absolute', left: n.x * 1.4, top: n.y,
-          minWidth: 112,
-          border: `1px solid rgba(59,130,246,0.25)`,
-          borderTop: '3px solid #6366f1',
-          borderRadius: 6, background: '#111118',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
-        }}>
-          <div style={{ padding: '8px 12px', textAlign: 'center' }}>
-            {'stereotype' in n && (
-              <div style={{ fontSize: 8, color: '#818cf8', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 2 }}>
-                «{(n as {stereotype:string}).stereotype}»
-              </div>
-            )}
-            <div style={{ fontSize: 12, fontWeight: 700, color: '#fff' }}>{n.label}</div>
+
+      {/* Node 1: API Gateway */}
+      <div className="float-medium float-delay-1" style={{
+        position: 'absolute', left: 80, top: 160, width: 200,
+        background: '#111827', borderRadius: 12, border: `1px solid ${T.border}`, borderTop: `3px solid ${T.primary}`,
+        boxShadow: '0 12px 32px rgba(0,0,0,0.2)',
+      }}>
+        <div style={{ padding: '16px 20px', borderBottom: `1px solid ${T.border}` }}>
+          <div style={{ fontSize: 9, color: T.accent, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 4 }}>«Service»</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#fff', fontWeight: 600, fontSize: 14 }}>
+            <Layers size={16} /> API Gateway
           </div>
         </div>
-      ))}
+        <div style={{ padding: '12px 20px', fontSize: 12, color: T.muted, fontFamily: 'monospace' }}>
+          <div>+ routeReq(req)</div>
+          <div>+ authCheck()</div>
+        </div>
+      </div>
+
+      {/* Node 2: Auth Service */}
+      <div className="float-medium float-delay-2" style={{
+        position: 'absolute', left: 480, top: 280, width: 220,
+        background: '#111827', borderRadius: 12, border: `1px solid ${T.primary}`, borderTop: `3px solid ${T.primary}`,
+        boxShadow: `0 0 0 1px ${T.primary}, 0 12px 40px rgba(79,124,255,0.15)`,
+      }}>
+        <div style={{ padding: '16px 20px', borderBottom: `1px solid ${T.border}` }}>
+          <div style={{ fontSize: 9, color: T.accent, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 4 }}>«Microservice»</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#fff', fontWeight: 600, fontSize: 14 }}>
+            <Lock size={16} /> Auth Service
+          </div>
+        </div>
+        <div style={{ padding: '12px 20px', fontSize: 12, color: T.muted, fontFamily: 'monospace' }}>
+          <div style={{ color: '#10B981' }}>+ validateToken()</div>
+          <div>- issueJWT()</div>
+        </div>
+      </div>
+
+      {/* AI Console Overlay */}
+      <div className="float-slow" style={{
+        position: 'absolute', bottom: 60, left: 60, right: 120,
+        background: T.surface, backdropFilter: 'blur(24px)',
+        borderRadius: 16, border: `1px solid ${T.border}`,
+        padding: 20, boxShadow: '0 24px 64px rgba(0,0,0,0.5)',
+        display: 'flex', alignItems: 'center', gap: 16,
+      }}>
+        <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(56,189,248,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.accent }}>
+          <Sparkles size={20} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 14, color: T.text, fontWeight: 500 }}>"Extract an Auth Microservice from the Gateway..."</div>
+          <div style={{ fontSize: 12, color: T.muted, marginTop: 4, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: T.primary, display: 'inline-block', animation: 'pulse-glow 2s infinite' }} />
+            Generating architecture...
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
-/* ─── Features ────────────────────────────────────────────────── */
-function Features() {
-  const sectionRef = useRef<HTMLElement>(null);
-  useReveal(sectionRef as React.RefObject<HTMLElement>);
-
-  const rows = [
-    {
-      icon:  <Zap size={20} color={T.accent} />,
-      title: 'Microservice Modeling',
-      body:  'Design massive distributed systems with ease. Auto-layout resolves complex hierarchies instantly.',
-    },
-    {
-      icon:  <GitBranch size={20} color={T.accent} />,
-      title: 'Architecture Intelligence',
-      body:  'AI-assisted refactoring suggestions and domain-driven design visualization powered by Gemini.',
-    },
-    {
-      icon:  <Download size={20} color={T.accent} />,
-      title: 'High-Fidelity Exports',
-      body:  'Export clean SVG or high-res PNG. Ready for your engineering documentation.',
-    },
-  ];
+function Hero() {
+  const navigate = useNavigate();
 
   return (
-    <section ref={sectionRef} id="features" style={{
-      background: 'transparent', padding: '120px 0',
-      borderTop: `1px solid rgba(255, 255, 255, 0.05)`,
+    <section style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      position: 'relative',
+      overflow: 'hidden',
     }}>
-      <div style={container}>
-        {/* Label */}
-        <p data-reveal style={{
-          fontSize: 11, letterSpacing: '0.15em', color: T.accent,
-          fontWeight: 600, textTransform: 'uppercase', marginBottom: 12,
-        }}>WHY ARCHSPACE</p>
+      <div className="hero-split" style={{
+        maxWidth: 1400, margin: '0 auto', padding: '0 40px', width: '100%',
+        display: 'flex', alignItems: 'center', position: 'relative', zIndex: 10,
+      }}>
+        {/* Left Copy */}
+        <div className="hero-copy" style={{ flex: '0 0 50%', maxWidth: 600, display: 'flex', flexDirection: 'column', zIndex: 20 }}>
+          
+          <div className="reveal" style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 32 }}>
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: T.accent, boxShadow: `0 0 12px ${T.accent}` }} />
+            <span style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: T.accent }}>ArchSpace AI is Live</span>
+          </div>
 
-        {/* Heading */}
-        <h2 data-reveal data-delay="1" style={{
-          fontSize: 'clamp(32px, 5vw, 52px)',
-          fontWeight: 700, color: T.text,
-          maxWidth: 600, lineHeight: 1.15,
-          letterSpacing: '-0.025em',
-          marginBottom: 60,
-        }}>
-          Built for architects who<br />demand precision.
-        </h2>
+          <h1 className="reveal delay-1" style={{
+            fontSize: 'clamp(48px, 6vw, 72px)', fontWeight: 600, lineHeight: 1.1,
+            color: T.text, letterSpacing: '-0.03em', margin: '0 0 24px',
+          }}>
+            Describe systems.<br />
+            <span style={{ color: T.muted }}>Generate architecture.</span>
+          </h1>
 
-        {/* Rows */}
-        {rows.map((row, i) => (
-          <div key={row.title}>
-            <div
-              className="feat-row"
-              data-reveal
-              data-delay={String(i + 2) as '2' | '3' | '4'}
+          <p className="reveal delay-2" style={{
+            fontSize: 18, color: T.muted, lineHeight: 1.6, marginBottom: 48, maxWidth: 500,
+          }}>
+            The intelligent workspace that turns ideas into UML instantly. Design, refactor, and visualize domain-driven systems with AI.
+          </p>
+
+          <div className="reveal delay-3" style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+            <button
+              onClick={() => navigate('/editor')}
               style={{
-                display: 'flex', alignItems: 'center',
-                gap: 24, padding: '36px 0',
+                background: T.text, color: T.bg, padding: '14px 32px', borderRadius: 8,
+                fontWeight: 600, fontSize: 15, border: 'none', cursor: 'pointer',
+                transition: 'all 200ms ease', display: 'flex', alignItems: 'center', gap: 8,
               }}
-              onMouseEnter={e => { (e.currentTarget.querySelector('.feat-arrow') as HTMLElement | null)!.style.opacity = '1'; }}
-              onMouseLeave={e => { (e.currentTarget.querySelector('.feat-arrow') as HTMLElement | null)!.style.opacity = '0.2'; }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#e2e8f0'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = T.text; e.currentTarget.style.transform = 'translateY(0)'; }}
             >
-              {/* Icon */}
-              <div style={{
-                flexShrink: 0,
-                width: 40, height: 40, borderRadius: 8,
-                background: T.surface,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                border: `1px solid ${T.border}`,
-              }}>
-                {row.icon}
-              </div>
+              Open Workspace
+            </button>
+            
+            <button
+              style={{
+                background: 'transparent', color: T.text, padding: '14px 32px', borderRadius: 8,
+                fontWeight: 500, fontSize: 15, border: `1px solid ${T.border}`, cursor: 'pointer',
+                transition: 'all 200ms ease', display: 'flex', alignItems: 'center', gap: 8,
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = T.muted; e.currentTarget.style.background = T.surface; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.background = 'transparent'; }}
+            >
+              <Play size={16} fill="currentColor" /> Watch Demo
+            </button>
+          </div>
+        </div>
 
-              {/* Text */}
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 18, fontWeight: 600, color: T.text, marginBottom: 4 }}>{row.title}</div>
-                <div style={{ fontSize: 15, color: T.muted, maxWidth: 520, lineHeight: 1.55 }}>{row.body}</div>
-              </div>
+        {/* Right Preview */}
+        <WorkspacePreview />
+      </div>
+    </section>
+  );
+}
 
-              {/* Subtle arrow */}
-              <div className="feat-arrow" style={{
-                flexShrink: 0, color: T.accent, opacity: 0.2,
-                transition: 'opacity 200ms ease', fontSize: 18,
-              }}>→</div>
+function InteractiveShowcase() {
+  return (
+    <section style={{
+      padding: '160px 40px',
+      position: 'relative',
+      background: T.bg,
+      borderTop: `1px solid ${T.border}`,
+      overflow: 'hidden',
+    }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto' }}>
+        
+        <div className="reveal" style={{ textAlign: 'center', marginBottom: 80 }}>
+          <h2 style={{
+            fontSize: 'clamp(32px, 4vw, 48px)', fontWeight: 600, color: T.text,
+            letterSpacing: '-0.02em', margin: '0 0 16px',
+          }}>
+            From description to architecture in seconds.
+          </h2>
+          <p style={{ fontSize: 18, color: T.muted, maxWidth: 600, margin: '0 auto', lineHeight: 1.6 }}>
+            Type your requirements in natural language. Our AI engine instantly interprets your domain and generates precise UML.
+          </p>
+        </div>
+
+        {/* Workflow Container */}
+        <div className="showcase-grid" style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 200px 1fr',
+          gap: 24,
+          alignItems: 'center',
+          position: 'relative',
+        }}>
+          
+          {/* 1. Input Panel */}
+          <div className="reveal delay-1" style={{
+            background: T.surface, border: `1px solid ${T.border}`, borderRadius: 16,
+            padding: 24, boxShadow: '0 24px 64px rgba(0,0,0,0.3)',
+            position: 'relative', zIndex: 10, backdropFilter: 'blur(12px)',
+          }}>
+            <div style={{ fontSize: 11, color: T.accent, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 16 }}>1. Natural Language Input</div>
+            
+            <div style={{
+              background: '#0B1020', border: `1px solid ${T.primary}`, borderRadius: 12, padding: '16px 20px',
+              display: 'flex', gap: 12, alignItems: 'flex-start',
+              boxShadow: `0 0 0 1px ${T.primary}, 0 12px 32px rgba(79,124,255,0.15)`,
+            }}>
+              <div style={{ color: T.primary, marginTop: 2 }}>
+                <Sparkles size={18} />
+              </div>
+              <div style={{ fontSize: 15, color: T.text, lineHeight: 1.5, fontWeight: 500 }}>
+                "Create an <span style={{color: T.accent}}>Animal</span> class with a String name attribute. <span style={{color: T.accent}}>Tiger</span> extends Animal."
+              </div>
+            </div>
+          </div>
+
+          {/* 2. Processing Flow */}
+          <div className="reveal delay-2" style={{
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16,
+            position: 'relative',
+          }}>
+            {/* SVG Connecting Line Background */}
+            <svg className="flow-line" style={{ position: 'absolute', top: '50%', left: -50, right: -50, height: 2, transform: 'translateY(-50%)', zIndex: 0, width: 'calc(100% + 100px)' }}>
+              <line x1="0" y1="1" x2="100%" y2="1" stroke={T.primary} strokeWidth="2" opacity="0.4" strokeDasharray="6 6" style={{ animation: 'dash-flow 1s linear infinite' }} />
+            </svg>
+            
+            <div style={{
+              background: '#0B1020', border: `1px solid ${T.border}`, borderRadius: '50%',
+              width: 56, height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: T.primary, zIndex: 10, position: 'relative',
+              animation: 'pulse-glow 2s infinite',
+            }}>
+              <Layers size={24} />
+            </div>
+            
+            <div style={{ background: T.bg, padding: '0 8px', fontSize: 13, color: T.muted, fontWeight: 500, zIndex: 10 }}>
+              AI Interpretation
+            </div>
+          </div>
+
+          {/* 3. UML Output Preview */}
+          <div className="reveal delay-3" style={{
+            position: 'relative', height: 320,
+            background: 'radial-gradient(circle at center, rgba(15, 23, 42, 0.4) 0%, transparent 70%)',
+          }}>
+            <div style={{ position: 'absolute', top: 0, left: '10%', fontSize: 11, color: T.accent, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>3. Generated UML</div>
+            
+            {/* Class: Animal */}
+            <div className="float-medium" style={{
+              position: 'absolute', top: 40, left: '10%', width: 180,
+              background: '#111827', borderRadius: 12, border: `1px solid ${T.border}`, borderTop: `3px solid ${T.primary}`,
+              boxShadow: '0 12px 32px rgba(0,0,0,0.2)',
+            }}>
+              <div style={{ padding: '12px 16px', borderBottom: `1px solid ${T.border}`, textAlign: 'center' }}>
+                <div style={{ color: '#fff', fontWeight: 600, fontSize: 14 }}>Animal</div>
+              </div>
+              <div style={{ padding: '10px 16px', fontSize: 12, color: T.muted, fontFamily: 'monospace' }}>
+                <div style={{ color: T.accent }}>+ name: String</div>
+              </div>
             </div>
 
-            {/* Divider (not after last item) */}
-            {i < rows.length - 1 && (
-              <div style={{ height: 1, background: T.border }} />
-            )}
+            {/* Connecting SVG Arrow */}
+            <svg style={{ position: 'absolute', top: 110, left: '10%', width: 180, height: 100, pointerEvents: 'none' }}>
+              <path d="M 90 20 L 90 80" fill="none" stroke={T.muted} strokeWidth="1.5" />
+              <polygon points="85,25 90,15 95,25" fill={T.bg} stroke={T.muted} strokeWidth="1.5" />
+            </svg>
+
+            {/* Class: Tiger */}
+            <div className="float-medium float-delay-1" style={{
+              position: 'absolute', top: 190, left: '10%', width: 180,
+              background: '#111827', borderRadius: 12, border: `1px solid ${T.primary}`, borderTop: `3px solid ${T.primary}`,
+              boxShadow: `0 0 0 1px ${T.primary}, 0 12px 40px rgba(79,124,255,0.15)`,
+            }}>
+              <div style={{ padding: '12px 16px', textAlign: 'center' }}>
+                <div style={{ color: '#fff', fontWeight: 600, fontSize: 14 }}>Tiger</div>
+              </div>
+            </div>
+            
           </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* ─── Closing CTA ─────────────────────────────────────────────── */
-function ClosingCTA() {
-  const navigate   = useNavigate();
-  const sectionRef = useRef<HTMLElement>(null);
-  useReveal(sectionRef as React.RefObject<HTMLElement>);
-
-  return (
-    <section ref={sectionRef} id="workflow" style={{
-      background:  'rgba(255, 255, 255, 0.02)',
-      borderTop:   `1px solid rgba(255, 255, 255, 0.05)`,
-      padding:     '120px 48px',
-      textAlign:   'center',
-    }}>
-      <div style={{ maxWidth: 700, margin: '0 auto' }}>
-        <p data-reveal style={{
-          fontSize: 11, letterSpacing: '0.15em',
-          color: T.accent, fontWeight: 600,
-          textTransform: 'uppercase', marginBottom: 16,
-        }}>OPEN SOURCE</p>
-
-        <h2 data-reveal data-delay="1" style={{
-          fontSize: 'clamp(36px, 5vw, 64px)',
-          fontWeight: 800, color: T.text,
-          lineHeight: 1.1, letterSpacing: '-0.03em',
-          marginBottom: 36,
-        }}>
-          Start building.<br />
-          <span style={{ color: T.muted }}>No account needed.</span>
-        </h2>
-
-        <div data-reveal data-delay="2" data-reveal-mode="scale">
-          <button
-            onClick={() => navigate('/editor')}
-            style={{
-              background: T.text, color: T.bg,
-              padding: '14px 36px', borderRadius: 8,
-              fontWeight: 700, fontSize: 16,
-              border: 'none', cursor: 'pointer',
-              transition: 'background 200ms ease, transform 200ms ease',
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-            }}
-            onMouseEnter={e => { e.currentTarget.style.background = '#e5e7eb'; e.currentTarget.style.transform = 'scale(1.02)'; }}
-            onMouseLeave={e => { e.currentTarget.style.background = T.text; e.currentTarget.style.transform = ''; }}
-          >
-            Launch Editor Now →
-          </button>
         </div>
+
       </div>
     </section>
   );
 }
 
-/* ─── Footer ──────────────────────────────────────────────────── */
 function Footer() {
-  const links = ['Twitter', 'GitHub', 'Discord'];
   return (
     <footer style={{
-      background: 'transparent',
-      borderTop:  `1px solid rgba(255, 255, 255, 0.05)`,
-      padding:    '32px 48px',
+      borderTop: `1px solid ${T.border}`, padding: '32px 40px', background: T.bg,
+      position: 'relative', zIndex: 20,
     }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-        {/* Main row */}
-        <div className="footer-inner" style={{
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          flexWrap: 'wrap', gap: 16, marginBottom: 20,
-        }}>
-          {/* Left */}
-          <div>
-            <div style={{ fontWeight: 600, color: T.text, fontSize: 14, marginBottom: 2 }}>ArchSpace</div>
-            <div style={{ color: T.muted, fontSize: 13 }}>The AI workspace for software architecture.</div>
-          </div>
-
-          {/* Right: links */}
-          <div style={{ display: 'flex', gap: 24 }}>
-            {links.map(l => (
-              <a key={l} href="#"
-                style={{ color: T.muted, fontSize: 13, textDecoration: 'none', transition: 'color 150ms ease' }}
-                onMouseEnter={e => (e.currentTarget.style.color = T.text)}
-                onMouseLeave={e => (e.currentTarget.style.color = T.muted)}
-              >{l}</a>
-            ))}
-          </div>
+      <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: T.muted, fontSize: 14 }}>
+          <div style={{ width: 16, height: 16, borderRadius: 4, background: T.primary }} />
+          ArchSpace © 2026
         </div>
-
-        {/* Copyright */}
-        <div className="footer-copy" style={{
-          textAlign: 'right', fontSize: 12, color: '#555566',
-        }}>
-          © 2026 ArchSpace.
+        <div style={{ display: 'flex', gap: 24 }}>
+          {['Twitter', 'GitHub', 'Terms'].map(l => (
+            <span key={l} style={{ color: T.muted, fontSize: 13, cursor: 'pointer', transition: 'color 150ms' }}
+              onMouseEnter={e => (e.currentTarget.style.color = T.text)}
+              onMouseLeave={e => (e.currentTarget.style.color = T.muted)}
+            >{l}</span>
+          ))}
         </div>
       </div>
     </footer>
   );
 }
 
-/* ─── Root ────────────────────────────────────────────────────── */
 export function LandingPage() {
   return (
-    <div style={{ background: T.gradient, color: T.text, minHeight: '100vh', overflowX: 'hidden', position: 'relative' }}>
-      {/* Subtle overlay to deepen the background */}
-      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.2)', pointerEvents: 'none' }} />
+    <div style={{ background: T.bg, color: T.text, minHeight: '100vh', fontFamily: 'var(--font-sans)', overflowX: 'hidden' }}>
       <AnimationStyles />
       <Nav />
       <Hero />
-      <Features />
-      <ClosingCTA />
+      <InteractiveShowcase />
       <Footer />
     </div>
   );

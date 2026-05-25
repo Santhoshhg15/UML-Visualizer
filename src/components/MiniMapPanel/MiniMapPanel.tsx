@@ -39,12 +39,12 @@ export default function MiniMapPanel() {
 
   return (
     <div
-      className="flex flex-col overflow-hidden bg-surface-950/60 backdrop-blur-xl shadow-panel transition-all duration-300"
+      className="flex flex-col overflow-hidden bg-surface-900/40 backdrop-blur-md shadow-panel transition-all duration-300 opacity-75 hover:opacity-100"
       style={{
         width: WIDTH,
         borderRadius: 'var(--radius-xl)',
         border: 'var(--panel-border)',
-        opacity: isLayouting ? 0.4 : 1,
+        opacity: isLayouting ? 0.4 : undefined,
         transform: isLayouting ? 'scale(0.98)' : 'scale(1)',
       }}
     >
@@ -70,7 +70,7 @@ export default function MiniMapPanel() {
       <div style={{ width: WIDTH, height: HEIGHT }}>
         <MiniMap
           nodeColor="var(--brand-primary)"
-          maskColor="rgba(6, 8, 22, 0.75)"
+          maskColor="rgba(11, 16, 32, 0.6)"
           pannable={!isLayouting}
           zoomable={!isLayouting}
           style={{

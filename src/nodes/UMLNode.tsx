@@ -133,7 +133,7 @@ function MemberLine({ nodeId, member, index, type }: MemberLineProps) {
     <div
       onDoubleClick={() => setIsEditing(true)}
       className={cn(
-        'flex items-baseline gap-2 px-2 py-1 text-[12px] leading-snug font-mono tracking-tight text-surface-400 rounded-md hover:bg-surface-800/60 hover:text-surface-100 transition-colors cursor-text',
+        'flex items-baseline gap-2 px-2 py-1.5 text-[12px] leading-snug font-mono tracking-tight text-surface-400 rounded-md hover:bg-surface-800/60 hover:text-surface-100 transition-colors cursor-text',
         member.isStatic && 'underline decoration-surface-500 underline-offset-2',
         member.isAbstract && 'italic'
       )}
@@ -154,11 +154,11 @@ function Section({ nodeId, members, type }: { nodeId: string, members: UMLMember
   return (
     <div className="relative group/section">
       {members.length === 0 ? (
-        <div className="px-4 py-3 text-center">
+        <div className="px-6 py-4 text-center">
           <span className="text-[10px] italic text-surface-600 font-medium uppercase tracking-widest">— Empty —</span>
         </div>
       ) : (
-        <div className="px-1.5 py-2">
+        <div className="px-4 py-3">
           {members.map((m, i) => (
             <MemberLine key={`${m.visibility}${m.name}-${i}`} nodeId={nodeId} member={m} index={i} type={type} />
           ))}
@@ -241,7 +241,7 @@ const UMLNode = memo(function UMLNode({ id, data, selected }: NodeProps<UMLNodeT
       />
 
       {/* Header */}
-      <div className="px-5 pt-5 pb-4 text-center">
+      <div className="px-6 pt-6 pb-5 text-center">
         <div 
           className="min-h-[14px]"
           onDoubleClick={() => setEditingField('stereotype')}
@@ -279,9 +279,9 @@ const UMLNode = memo(function UMLNode({ id, data, selected }: NodeProps<UMLNodeT
         </div>
       </div>
 
-      <div className="mx-4 border-t border-surface-800/80" />
+      <div className="mx-6 border-t border-surface-800/80" />
       <Section nodeId={id} members={attributes} type="attributes" />
-      <div className="mx-4 border-t border-surface-800/80" />
+      <div className="mx-6 border-t border-surface-800/80" />
       <Section nodeId={id} members={methods} type="methods" />
 
       <Handle
